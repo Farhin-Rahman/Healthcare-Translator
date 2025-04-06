@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   FaMicrophone, 
   FaStop, 
@@ -16,6 +16,28 @@ export default function HealthcareTranslator() {
   const [isListening, setIsListening] = useState(false);
   const [targetLanguage, setTargetLanguage] = useState('es');
   const [error, setError] = useState(null);
+
+  // Translation handler
+  const handleTranslate = useCallback(async () => {
+    if (!transcript.trim()) return;
+    
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: transcript, targetLanguage })
+      });
+      if (!response.ok) {
+        throw new Error('Translation request failed');
+      }
+      const data = await response.json();
+      setTranslation(data.translatedText);
+      setError(null);
+    } catch (err) {
+      setError("Translation service unavailable. Please try again.");
+      console.error(err);
+    }
+  }, [transcript, targetLanguage]);
 
   // Speech recognition effect
   useEffect(() => {
@@ -36,33 +58,25 @@ export default function HealthcareTranslator() {
       setTranscript(text);
     };
 
-    if (isListening) recognition.start();
-    return () => recognition.stop();
-  }, [isListening]);
+    recognition.onerror = (event) => {
+      setError(`Speech recognition error: ${event.error}`);
+      setIsListening(false);
+    };
 
-  // Translation handler
-  const handleTranslate = async () => {
-    if (!transcript.trim()) return;
-    
-    try {
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: transcript, targetLanguage })
-      });
-      const data = await response.json();
-      setTranslation(data.translatedText);
-      setError(null);
-    } catch (err) {
-      setError("Translation service unavailable. Please try again.");
-      console.error(err);
+    if (isListening) {
+      recognition.start();
     }
-  };
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [isListening]);
 
   // Auto-translation effect
   useEffect(() => {
     handleTranslate();
-  }, [transcript, targetLanguage]);
+  }, [transcript, targetLanguage, handleTranslate]);
 
   // Text-to-speech function
   const speakTranslation = () => {
@@ -116,7 +130,7 @@ export default function HealthcareTranslator() {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
           <div className="bg-blue-50 p-4 border-b border-blue-100">
             <h2 className="flex items-center gap-2 text-xl font-semibold text-blue-800">
-              <FaUser className="text-blue-600" /> Patient's Speech
+              <FaUser className="text-blue-600" /> Patient Speech
             </h2>
           </div>
           <div className="p-6">
