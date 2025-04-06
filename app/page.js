@@ -75,18 +75,19 @@ export default function HealthcareTranslator() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      {/* Header - Made more prominent */}
       <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-blue-800">Medical Translator</h1>
-        <p className="text-gray-600">Real-time patient-provider communication</p>
+        <h1 className="text-4xl font-bold text-blue-800 mb-2">Medical Translator</h1>
+        <p className="text-lg text-gray-700">Real-time patient-provider communication</p>
       </header>
 
-      {/* Language Selection */}
+      {/* Language Selection - Improved styling */}
       <div className="max-w-md mx-auto mb-8">
-        <label className="block mb-2 font-medium">Translate to:</label>
+        <label className="block mb-2 text-lg font-semibold text-gray-700">Translate to:</label>
         <select
           value={targetLanguage}
           onChange={(e) => setTargetLanguage(e.target.value)}
-          className="w-full p-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full p-4 text-lg border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800"
         >
           <option value="es">Spanish</option>
           <option value="fr">French</option>
@@ -94,51 +95,71 @@ export default function HealthcareTranslator() {
         </select>
       </div>
 
-      {/* Microphone Button */}
+      {/* Microphone Button - Enhanced styling */}
       <div className="flex justify-center mb-8">
         <button
           onClick={() => setIsListening(!isListening)}
-          className={`flex items-center gap-2 p-4 rounded-full text-white ${
-            isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-600 hover:bg-blue-700'
-          } transition-all`}
+          className={`flex items-center gap-3 px-6 py-4 rounded-lg text-white text-lg font-semibold shadow-lg transform transition-all duration-200 ${
+            isListening 
+            ? 'bg-red-500 animate-pulse scale-105' 
+            : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+          }`}
         >
-          {isListening ? <FaStop size={20} /> : <FaMicrophone size={20} />}
+          {isListening ? <FaStop size={24} /> : <FaMicrophone size={24} />}
           {isListening ? "Stop Listening" : "Start Speaking"}
         </button>
       </div>
 
-      {/* Dual Transcript Display */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-blue-700 mb-4">
-            <FaUser className="text-blue-500" /> Patient
-          </h2>
-          <div className="min-h-40 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            {transcript || <span className="text-gray-400">Speech will appear here...</span>}
+      {/* Transcript and Translation Boxes - Improved visibility and styling */}
+      <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
+        {/* Patient's Speech Box */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+          <div className="bg-blue-50 p-4 border-b border-blue-100">
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-blue-800">
+              <FaUser className="text-blue-600" /> Patient's Speech
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="min-h-[200px] p-4 bg-white rounded-lg text-gray-800 text-lg leading-relaxed">
+              {transcript || 
+                <span className="text-gray-500 italic">
+                  Speech will appear here...
+                </span>
+              }
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-green-700 mb-4">
-            <FaLanguage className="text-green-500" /> Translation
-          </h2>
-          <div className="min-h-40 p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4">
-            {translation || <span className="text-gray-400">Translation will appear here...</span>}
+        {/* Translation Box */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+          <div className="bg-green-50 p-4 border-b border-green-100">
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-green-800">
+              <FaLanguage className="text-green-600" /> Translation
+            </h2>
           </div>
-          {translation && (
-            <button
-              onClick={speakTranslation}
-              className="w-full flex justify-center items-center gap-2 p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <FaVolumeUp /> Hear Translation
-            </button>
-          )}
+          <div className="p-6">
+            <div className="min-h-[200px] p-4 bg-white rounded-lg text-gray-800 text-lg leading-relaxed mb-4">
+              {translation || 
+                <span className="text-gray-500 italic">
+                  Translation will appear here...
+                </span>
+              }
+            </div>
+            {translation && (
+              <button
+                onClick={speakTranslation}
+                className="w-full flex justify-center items-center gap-2 p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-lg font-semibold"
+              >
+                <FaVolumeUp size={20} /> Speak Translation
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Error Display */}
+      {/* Error Display - Improved visibility */}
       {error && (
-        <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg">
+        <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg text-center font-semibold">
           <FaExclamationTriangle className="inline mr-2" />
           {error}
         </div>
