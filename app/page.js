@@ -9,6 +9,7 @@ import {
   FaExclamationTriangle 
 } from 'react-icons/fa';
 
+
 export default function HealthcareTranslator() {
   // State declarations
   const [transcript, setTranscript] = useState('');
@@ -103,10 +104,25 @@ export default function HealthcareTranslator() {
           onChange={(e) => setTargetLanguage(e.target.value)}
           className="w-full p-4 text-lg border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800"
         >
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
-        </select>
+  <option value="es">Spanish</option>
+  <option value="fr">French</option>
+  <option value="de">German</option>
+  <option value="el">Greek</option>
+  <option value="sv">Swedish</option>
+  <option value="it">Italian</option>
+  <option value="nl">Dutch</option>
+  <option value="pt">Portuguese</option>
+  <option value="pl">Polish</option>
+  <option value="ro">Romanian</option>
+  <option value="cs">Czech</option>
+  <option value="hu">Hungarian</option>
+  <option value="ja">Japanese</option>
+  <option value="ko">Korean</option>
+  <option value="vi">Vietnamese</option>
+  <option value="th">Thai</option>
+  <option value="hi">Hindi</option>
+  <option value="bn">Bengali</option>
+</select>
       </div>
 
       {/* Microphone Button - Enhanced styling */}
