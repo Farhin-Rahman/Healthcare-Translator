@@ -82,9 +82,42 @@ export default function HealthcareTranslator() {
   // Text-to-speech function
   const speakTranslation = () => {
     if (!translation) return;
+  
+    const languageMap = {
+      es: 'es-ES', // Spanish
+      fr: 'fr-FR', // French
+      de: 'de-DE', // German
+      bn: 'bn-IN', // Bengali
+      zh: 'zh-CN', // Chinese (Simplified)
+      ar: 'ar-SA', // Arabic
+      hi: 'hi-IN', // Hindi
+      ko: 'ko-KR', // Korean
+      ja: 'ja-JP', // Japanese
+      it: 'it-IT', // Italian
+      pt: 'pt-PT', // Portuguese
+      pl: 'pl-PL', // Polish
+      sv: 'sv-SE', // Swedish
+      th: 'th-TH', // Thai
+      vi: 'vi-VN', // Vietnamese
+      el: 'el-GR', // Greek
+      cs: 'cs-CZ', // Czech
+      hu: 'hu-HU', // Hungarian
+      nl: 'nl-NL', // Dutch
+      ro: 'ro-RO', // Romanian
+    };
+  
     const utterance = new SpeechSynthesisUtterance(translation);
-    utterance.lang = targetLanguage === 'es' ? 'es-ES' : 
-                    targetLanguage === 'fr' ? 'fr-FR' : 'de-DE';
+    utterance.lang = languageMap[targetLanguage] || 'en-US'; // Default to English if not found
+  
+    // Check if the browser supports the selected language
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find((v) => v.lang === utterance.lang);
+    if (voice) {
+      utterance.voice = voice;
+    } else {
+      console.warn(`No voice found for language: ${utterance.lang}`);
+    }
+  
     window.speechSynthesis.speak(utterance);
   };
 
