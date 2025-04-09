@@ -40,6 +40,9 @@ export async function POST(req) {
     
     for (const service of TRANSLATION_SERVICES) {
       try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+    
         const response = await fetch(
           service.params 
             ? `${service.url}?${service.params(processedText, targetLanguage)}`
@@ -52,10 +55,13 @@ export async function POST(req) {
               source: 'en',
               target: targetLanguage,
               format: 'text'
-            })
+            }),
+            signal: controller.signal // Attach the AbortController signal
           }
         );
-
+    
+        clearTimeout(timeout); // Clear timeout if fetch succeeds
+    
         if (response.ok) {
           const data = await response.json();
           translation = service.name === 'MyMemory' 
@@ -67,9 +73,8 @@ export async function POST(req) {
         console.warn(`${service.name} failed:`, e.message);
       }
     }
-
+    
     if (!translation) {
-      // Fallback to simple word substitution
       translation = processedText.split(' ').map(word => 
         medicalDictionary.get(word) || word
       ).join(' ');
@@ -82,11 +87,12 @@ export async function POST(req) {
     return NextResponse.json(
       { 
         error: "Translation service unavailable",
-        fallback: medicalDictionary.get(text.toLowerCase()) || text 
+        fallback: text.split(' ').map(word => 
+          medicalDictionary.get(word.toLowerCase()) || word
+        ).join(' ')
       },
       { status: 200 } // Still return 200 with fallback
     );
   }
 }
-
 export const runtime = 'edge';
