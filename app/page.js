@@ -104,24 +104,24 @@ export default function HealthcareTranslator() {
           onChange={(e) => setTargetLanguage(e.target.value)}
           className="w-full p-4 text-lg border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800"
         >
-  <option value="es">Spanish</option>
-  <option value="fr">French</option>
-  <option value="de">German</option>
-  <option value="el">Greek</option>
-  <option value="sv">Swedish</option>
-  <option value="it">Italian</option>
-  <option value="nl">Dutch</option>
-  <option value="pt">Portuguese</option>
-  <option value="pl">Polish</option>
-  <option value="ro">Romanian</option>
-  <option value="cs">Czech</option>
-  <option value="hu">Hungarian</option>
-  <option value="ja">Japanese</option>
-  <option value="ko">Korean</option>
-  <option value="vi">Vietnamese</option>
-  <option value="th">Thai</option>
-  <option value="hi">Hindi</option>
-  <option value="bn">Bengali</option>
+<option value="bn">Bengali (বাংলা)</option>
+  <option value="cs">Czech (Čeština)</option>
+  <option value="nl">Dutch (Nederlands)</option>
+  <option value="fr">French (Français)</option>
+  <option value="de">German (Deutsch)</option>
+  <option value="el">Greek (Ελληνικά)</option>
+  <option value="hi">Hindi (हिन्दी)</option>
+  <option value="hu">Hungarian (Magyar)</option>
+  <option value="it">Italian (Italiano)</option>
+  <option value="ja">Japanese (日本語)</option>
+  <option value="ko">Korean (한국어)</option>
+  <option value="pl">Polish (Polski)</option>
+  <option value="pt">Portuguese (Português)</option>
+  <option value="ro">Romanian (Română)</option>
+  <option value="es">Spanish (Español)</option>
+  <option value="sv">Swedish (Svenska)</option>
+  <option value="th">Thai (ไทย)</option>
+  <option value="vi">Vietnamese (Tiếng Việt)</option>
 </select>
       </div>
 
