@@ -19,7 +19,6 @@ export default function HealthcareTranslator() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Microphone click handler
   const handleMicClick = useCallback(() => {
     if (!('webkitSpeechRecognition' in window)) {
       alert("For best accuracy:\n\n• Use Chrome/Edge on desktop\n• Allow microphone access");
@@ -28,7 +27,6 @@ export default function HealthcareTranslator() {
     setIsListening(prev => !prev);
   }, []);
 
-  // Translation handler
   const handleTranslate = useCallback(async () => {
     if (!transcript.trim()) return;
     
@@ -37,28 +35,20 @@ export default function HealthcareTranslator() {
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          text: transcript, 
-          targetLanguage 
-        })
+        body: JSON.stringify({ text: transcript, targetLanguage })
       });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      if (!response.ok) throw new Error('Translation failed');
       const data = await response.json();
       setTranslation(data.translatedText);
       setError(null);
     } catch (err) {
-      setError(err.message || "Translation service unavailable. Please try again.");
-      console.error("Translation error:", err);
+      setError("Translation service unavailable. Please try again.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   }, [transcript, targetLanguage]);
 
-  // Speech recognition effect
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -94,16 +84,13 @@ export default function HealthcareTranslator() {
     };
   }, [isListening]);
 
-  // Auto-translation with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       handleTranslate();
-    }, 500); // Debounce to avoid rapid API calls
-    
+    }, 500);
     return () => clearTimeout(timer);
   }, [transcript, targetLanguage, handleTranslate]);
 
-  // Text-to-speech function
   const speakTranslation = useCallback(() => {
     if (!translation || isLoading) return;
     
@@ -117,9 +104,8 @@ export default function HealthcareTranslator() {
   
     const utterance = new SpeechSynthesisUtterance(translation);
     utterance.lang = languageMap[targetLanguage] || 'en-US';
-    utterance.rate = 0.9; // Slightly slower for medical terms
+    utterance.rate = 0.9;
     
-    // Wait for voices to load if needed
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
       const voice = voices.find(v => v.lang === utterance.lang);
@@ -143,16 +129,31 @@ export default function HealthcareTranslator() {
       </header>
 
       <div className="max-w-md mx-auto mb-8">
-        <label className="block mb-2 text-lg font-semibold text-gray-700">
-          Translate to:
-        </label>
+        <label className="block mb-2 text-lg font-semibold text-gray-700">Translate to:</label>
         <select
           value={targetLanguage}
           onChange={(e) => setTargetLanguage(e.target.value)}
           disabled={isLoading}
           className="w-full p-4 text-lg border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 disabled:opacity-50"
         >
-          {/* Language options remain the same */}
+          <option value="bn">Bengali (বাংলা)</option>
+          <option value="cs">Czech (Čeština)</option>
+          <option value="nl">Dutch (Nederlands)</option>
+          <option value="fr">French (Français)</option>
+          <option value="de">German (Deutsch)</option>
+          <option value="el">Greek (Ελληνικά)</option>
+          <option value="hi">Hindi (हिन्दी)</option>
+          <option value="hu">Hungarian (Magyar)</option>
+          <option value="it">Italian (Italiano)</option>
+          <option value="ja">Japanese (日本語)</option>
+          <option value="ko">Korean (한국어)</option>
+          <option value="pl">Polish (Polski)</option>
+          <option value="pt">Portuguese (Português)</option>
+          <option value="ro">Romanian (Română)</option>
+          <option value="es">Spanish (Español)</option>
+          <option value="sv">Swedish (Svenska)</option>
+          <option value="th">Thai (ไทย)</option>
+          <option value="vi">Vietnamese (Tiếng Việt)</option>
         </select>
       </div>
 
@@ -185,11 +186,6 @@ export default function HealthcareTranslator() {
           )}
         </button>
       </div>
-
-      {/* Rest of your JSX remains the same */}
-    </div>
-  );
-}
 
       <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
@@ -226,7 +222,8 @@ export default function HealthcareTranslator() {
             {translation && (
               <button
                 onClick={speakTranslation}
-                className="w-full flex justify-center items-center gap-2 p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-lg font-semibold"
+                disabled={isLoading}
+                className="w-full flex justify-center items-center gap-2 p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FaVolumeUp size={20} /> Speak Translation
               </button>
@@ -235,9 +232,12 @@ export default function HealthcareTranslator() {
         </div>
       </div>
 
-{error && (
-  <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg text-center font-semibold">
-    <FaExclamationTriangle className="inline mr-2" />
-    {error}
-  </div>
-)}
+      {error && (
+        <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg text-center font-semibold">
+          <FaExclamationTriangle className="inline mr-2" />
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
