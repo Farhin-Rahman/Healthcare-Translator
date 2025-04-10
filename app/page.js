@@ -190,3 +190,54 @@ export default function HealthcareTranslator() {
     </div>
   );
 }
+
+      <div className="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+          <div className="bg-blue-50 p-4 border-b border-blue-100">
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-blue-800">
+              <FaUser className="text-blue-600" /> Patient Speech
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="min-h-[200px] p-4 bg-white rounded-lg text-gray-800 text-lg leading-relaxed">
+              {transcript || 
+                <span className="text-gray-500 italic">
+                  Speech will appear here...
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+          <div className="bg-green-50 p-4 border-b border-green-100">
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-green-800">
+              <FaLanguage className="text-green-600" /> Translation
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="min-h-[200px] p-4 bg-white rounded-lg text-gray-800 text-lg leading-relaxed mb-4">
+              {translation || 
+                <span className="text-gray-500 italic">
+                  Translation will appear here...
+                </span>
+              }
+            </div>
+            {translation && (
+              <button
+                onClick={speakTranslation}
+                className="w-full flex justify-center items-center gap-2 p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-lg font-semibold"
+              >
+                <FaVolumeUp size={20} /> Speak Translation
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+{error && (
+  <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg text-center font-semibold">
+    <FaExclamationTriangle className="inline mr-2" />
+    {error}
+  </div>
+)}
