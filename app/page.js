@@ -1,6 +1,12 @@
 'use client';
-import HealthcareTranslator from './components/HealthcareTranslator';
+import dynamic from 'next/dynamic';
+const HealthcareTranslator = dynamic(() => import('./components/HealthcareTranslator'), { ssr: false });
 
 export default function Home() {
-  return <HealthcareTranslator />;
+  return (
+    <div>
+      <h1>Hello Page</h1>
+      <HealthcareTranslator />
+    </div>
+  );
 }
