@@ -19,7 +19,8 @@ export default function HealthcareTranslator() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleMicClick = useCallback(() => {
-    if (!('webkitSpeechRecognition' in window)) {
+    if (typeof window !== 'undefined' && !('webkitSpeechRecognition' in window))
+      {
       alert("For best accuracy:\n\n• Use Chrome/Edge on desktop\n• Allow microphone access");
       return;
     }
