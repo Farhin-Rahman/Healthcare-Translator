@@ -5,7 +5,7 @@ const HealthcareTranslator = dynamic(() => import('./components/HealthcareTransl
 export default function Home() {
   return (
     <div>
-      <h1>Hello Page</h1>
+      
       <HealthcareTranslator />
     </div>
   );
