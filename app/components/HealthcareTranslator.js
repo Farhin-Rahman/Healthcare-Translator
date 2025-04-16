@@ -107,7 +107,7 @@ export default function HealthcareTranslator() {
     utterance.lang = targetLang;
     utterance.rate = 0.9;
   
-    const setAndSpeak = () => {
+    try {
       const voices = window.speechSynthesis.getVoices();
       let voice = voices.find(v => v.lang === targetLang);
   
@@ -127,15 +127,8 @@ export default function HealthcareTranslator() {
       }
   
       window.speechSynthesis.speak(utterance);
-    };
-  
-    // Voices may not be loaded yet
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        setAndSpeak();
-      };
-    } else {
-      setAndSpeak();
+    } catch (error) {
+      console.error('Error speaking translation:', error);
     }
   }, [translation, targetLanguage, isLoading]);
 
