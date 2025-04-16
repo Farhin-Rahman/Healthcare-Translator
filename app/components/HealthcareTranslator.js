@@ -4,11 +4,14 @@ import { FaMicrophone, FaStop, FaVolumeUp, FaSpinner, FaTimes } from 'react-icon
 
 export default function HealthcareTranslator() {
   const [transcript, setTranscript] = useState('');
-  // ... ALL your existing state, effects, and JSX ...
-  // PASTE EVERYTHING from your current page.js component here
+
+  useEffect(() => {
+    // Load voices on mount
+    window.speechSynthesis.getVoices();
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 md:p-8">
-      {/* Your entire JSX */}
+      {/* Your entire JSX here */}
     </div>
   );
 }

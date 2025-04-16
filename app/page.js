@@ -93,7 +93,7 @@ export default function HealthcareTranslator() {
 
   const speakTranslation = useCallback(() => {
     if (!translation || isLoading) return;
-    
+  
     const languageMap = {
       es: 'es-ES', fr: 'fr-FR', de: 'de-DE', bn: 'bn-IN',
       zh: 'zh-CN', ar: 'ar-SA', hi: 'hi-IN', ko: 'ko-KR',
@@ -102,24 +102,43 @@ export default function HealthcareTranslator() {
       cs: 'cs-CZ', hu: 'hu-HU', nl: 'nl-NL', ro: 'ro-RO'
     };
   
+    const targetLang = languageMap[targetLanguage] || 'en-US';
     const utterance = new SpeechSynthesisUtterance(translation);
-    utterance.lang = languageMap[targetLanguage] || 'en-US';
+    utterance.lang = targetLang;
     utterance.rate = 0.9;
-    
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      const voice = voices.find(v => v.lang === utterance.lang);
-      if (voice) utterance.voice = voice;
+  
+    const setAndSpeak = () => {
+      const voices = window.speechSynthesis.getVoices();
+      let voice = voices.find(v => v.lang === targetLang);
+  
+      // If exact match not found, fallback to closest lang
+      if (!voice) {
+        const langPrefix = targetLang.split('-')[0];
+        voice = voices.find(v => v.lang.startsWith(langPrefix));
+      }
+  
+      // Fallback to default if still nothing
+      if (!voice && voices.length) {
+        voice = voices[0];
+      }
+  
+      if (voice) {
+        utterance.voice = voice;
+      }
+  
       window.speechSynthesis.speak(utterance);
-    } else {
+    };
+  
+    // Voices may not be loaded yet
+    if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = () => {
-        const voices = window.speechSynthesis.getVoices();
-        const voice = voices.find(v => v.lang === utterance.lang);
-        if (voice) utterance.voice = voice;
-        window.speechSynthesis.speak(utterance);
+        setAndSpeak();
       };
+    } else {
+      setAndSpeak();
     }
   }, [translation, targetLanguage, isLoading]);
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
