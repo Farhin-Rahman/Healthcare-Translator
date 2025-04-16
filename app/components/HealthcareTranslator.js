@@ -162,7 +162,22 @@ export default function HealthcareTranslator() {
         <p className="text-lg text-gray-700">Enabling real-time conversations between patients and healthcare providers</p>
       </header>
 
-     
+      {/* Test Button */}
+      <div className="text-center mb-4">
+        <button 
+          onClick={() => {
+            console.log('Testing speech...');
+            const utterance = new SpeechSynthesisUtterance('This is a test message');
+            utterance.onstart = () => console.log('Test: Started speaking');
+            utterance.onend = () => console.log('Test: Finished speaking');
+            utterance.onerror = (event) => console.error('Test: Speech error:', event);
+            window.speechSynthesis.speak(utterance);
+          }}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Test Speech
+        </button>
+      </div>
 
       <div className="max-w-md mx-auto mb-8">
         <label className="block mb-2 text-lg font-semibold text-gray-700">Translate to:</label>
