@@ -92,29 +92,68 @@ export default function HealthcareTranslator() {
   }, [transcript, targetLanguage, handleTranslate]);
 
   const speakTranslation = useCallback(() => {
-    // Debug checks
-    console.log('Speech Synthesis available?', 'speechSynthesis' in window);
-    console.log('Current translation:', translation);
-    console.log('Target language:', targetLanguage);
-  
-    if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in your browser');
-      return;
-    }
-  
+    if (!translation || isLoading) return;
+
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
-  
+
+    // Create a new utterance
     const utterance = new SpeechSynthesisUtterance(translation);
     
-    // Add event listeners to track speech status
-    utterance.onstart = () => console.log('Started speaking');
-    utterance.onend = () => console.log('Finished speaking');
-    utterance.onerror = (event) => console.error('Speech error:', event);
-  
-    // Simple version first - let's test basic functionality
-    window.speechSynthesis.speak(utterance);
-  }, [translation, targetLanguage]);
+    // Wait for voices to load
+    const loadVoices = () => {
+      return new Promise((resolve) => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          resolve(voices);
+        } else {
+          window.speechSynthesis.onvoiceschanged = () => {
+            resolve(window.speechSynthesis.getVoices());
+          };
+        }
+      });
+    };
+
+    // Attempt to speak
+    const attemptSpeak = async () => {
+      try {
+        const voices = await loadVoices();
+        console.log('Available voices:', voices);
+
+        // Find a matching voice
+        const voice = voices.find(v => v.lang.startsWith(targetLanguage)) 
+                     || voices.find(v => v.lang.startsWith('es')) 
+                     || voices[0];
+
+        if (voice) {
+          console.log('Selected voice:', voice.name, voice.lang);
+          utterance.voice = voice;
+        }
+
+        // Set properties
+        utterance.lang = targetLanguage;
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // Add event listeners
+        utterance.onstart = () => console.log('Started speaking');
+        utterance.onend = () => console.log('Finished speaking');
+        utterance.onerror = (event) => {
+          console.error('Speech error:', event);
+          // Try speaking again without a specific voice
+          const retryUtterance = new SpeechSynthesisUtterance(translation);
+          window.speechSynthesis.speak(retryUtterance);
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch (error) {
+        console.error('Speech synthesis error:', error);
+      }
+    };
+
+    attemptSpeak();
+  }, [translation, targetLanguage, isLoading]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -123,22 +162,7 @@ export default function HealthcareTranslator() {
         <p className="text-lg text-gray-700">Enabling real-time conversations between patients and healthcare providers</p>
       </header>
 
-      {/* Test Button */}
-      <div className="text-center mb-4">
-        <button 
-          onClick={() => {
-            console.log('Testing speech...');
-            const utterance = new SpeechSynthesisUtterance('This is a test message');
-            utterance.onstart = () => console.log('Test: Started speaking');
-            utterance.onend = () => console.log('Test: Finished speaking');
-            utterance.onerror = (event) => console.error('Test: Speech error:', event);
-            window.speechSynthesis.speak(utterance);
-          }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Test Speech
-        </button>
-      </div>
+     
 
       <div className="max-w-md mx-auto mb-8">
         <label className="block mb-2 text-lg font-semibold text-gray-700">Translate to:</label>
