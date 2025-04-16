@@ -90,9 +90,10 @@ export default function HealthcareTranslator() {
     }, 500);
     return () => clearTimeout(timer);
   }, [transcript, targetLanguage, handleTranslate]);
-
   const speakTranslation = useCallback(() => {
     if (!translation || isLoading) return;
+  
+    console.log('Speaking translation...');
   
     const languageMap = {
       es: 'es-ES', fr: 'fr-FR', de: 'de-DE', bn: 'bn-IN',
@@ -109,6 +110,8 @@ export default function HealthcareTranslator() {
   
     try {
       const voices = window.speechSynthesis.getVoices();
+      console.log('Available voices:', voices);
+  
       let voice = voices.find(v => v.lang === targetLang);
   
       // If exact match not found, fallback to closest lang
@@ -124,14 +127,15 @@ export default function HealthcareTranslator() {
   
       if (voice) {
         utterance.voice = voice;
+        console.log('Using voice:', voice);
       }
   
       window.speechSynthesis.speak(utterance);
+      console.log('Speaking...');
     } catch (error) {
       console.error('Error speaking translation:', error);
     }
   }, [translation, targetLanguage, isLoading]);
-
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <header className="mb-8 text-center">
